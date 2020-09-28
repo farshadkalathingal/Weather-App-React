@@ -4,7 +4,7 @@ import'bootstrap/dist/css/bootstrap.min.css';
 import Weather from './components/weather'
 import Form from './components/form';
 
-const API_KEY = '746b075d4cba50898cc9a62d17b53910'
+const API_KEY = ''
 
 
 class App extends React.Component {
