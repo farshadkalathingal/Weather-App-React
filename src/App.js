@@ -1,63 +1,56 @@
-import React from 'react';
-import './App.css';
-import'bootstrap/dist/css/bootstrap.min.css';
-import Weather from './components/weather'
-import Form from './components/form';
-
-const API_KEY = '746b075d4cba50898cc9a62d17b53910'
-
-
-class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      city: undefined,
-      country: undefined,
-      icon: undefined,
-      celcius: undefined,
-      temp: undefined,
-      min: undefined,
-      max: undefined, 
-      desc:undefined,
-      error: false
-    };
-    this.getWeather();
-  }
-
-  getWeather = async(e) => {
+import React, { useState } from "react";
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Weather from "./components/weather";
+import Form from "./components/form";
+import axios from "axios";
+const App = () => {
+  const API_KEY = "746b075d4cba50898cc9a62d17b53910";
+  const [data, setData] = useState({
+    city: undefined,
+    country: undefined,
+    icon: undefined,
+    celcius: undefined,
+    temp: undefined,
+    min: undefined,
+    max: undefined,
+    desc: undefined,
+    error: false,
+  });
+  const handleChange = (e) => {
+    setData({
+      ...data,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const getWeather = async (e) => {
     e.preventDefault();
-    const city = e.target.elements.city.value;
-    
-    if (city) {
-      const api_call = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`);
-
-      const response = await api_call.json()
-      console.log(response)
-      this.setState({
-        city: response.name,
-        country: response.sys.country,
-        icon: response.weather[0].icon,
-        temp: response.main.temp,
-        min: response.main.temp_min,
-        max: response.main.temp_max,
-        desc: response.weather[0].description
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${data.city}&units=metric&appid=${API_KEY}`;
+    axios
+      .get(url)
+      .then((response) => {
+        const res = response.data;
+        const newData = {
+          city: res.name,
+          country: res.sys.country,
+          icon: res.weather[0].icon,
+          temp: res.main.temp,
+          min: res.main.temp_min,
+          max: res.main.temp_max,
+          desc: res.weather[0].description,
+          error: false,
+        };
+        console.log(newData);
+        setData(newData);
       })
-    } else {
-      this.setState({
-        error: true
-      });
-    }
-  }
-
-  render() {
-    return (
-      <div className="App">
-      <Form loadweather={this.getWeather} error={this.state.error}/>
-      <Weather city={this.state.city} country={this.state.country} temp={this.state.temp} min={this.state.min} max={this.state.max} icon={this.state.icon} desc={this.state.desc}/>
+      .catch((err) => setData({ ...data, error: true }));
+  };
+  return (
+    <div className="App">
+      <Form {...{ getWeather, handleChange, error: data.error }} />
+      <Weather {...{ data }} />
     </div>
-    );
-  }
-}
-
+  );
+};
 
 export default App;
