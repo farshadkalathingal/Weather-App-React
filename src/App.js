@@ -5,7 +5,7 @@ import Weather from "./components/weather";
 import Form from "./components/form";
 import axios from "axios";
 const App = () => {
-  const API_KEY = "746b075d4cba50898cc9a62d17b53910";
+  const API_KEY = "";
   const [data, setData] = useState({
     city: undefined,
     country: undefined,
